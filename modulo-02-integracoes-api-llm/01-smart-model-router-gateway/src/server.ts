@@ -1,6 +1,7 @@
+import { OpenRouterService } from './OpenRouterService.ts';
 import Fastify from "fastify";
 
-export const createServer = () => {
+export const createServer = (OpenRouterService: OpenRouterService) => {
     const app = Fastify({
         logger: false,
     });
@@ -18,7 +19,8 @@ export const createServer = () => {
         }, async (request, reply) => {
             try {
                 const { question } = request.body as { question: string };
-                return reply.send({ answer: `You asked: ${question}` });
+                const response = await OpenRouterService.generate(question);
+                return reply.send(response);
             } catch (error) {
                 console.error("Error processing request:", error);
                 return reply.code(500).send({ error: "Internal Server Error" });

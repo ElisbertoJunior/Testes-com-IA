@@ -1,8 +1,12 @@
 import { createServer } from "./server.ts" 
+import { config } from './config.ts'
+import { OpenRouterService } from './OpenRouterService.ts'
 
-const app = createServer();
+const routerService = new OpenRouterService(config);
 
-await app.listen({ port: 3000, host: "0.0.0.0"});
+const app = createServer(routerService);
+
+await app.listen({ port: config.port, host: "0.0.0.0"});
 
 app.inject({
     method: "POST",
@@ -10,5 +14,6 @@ app.inject({
     body: { question: "What is the capital of France?" }
 }).then((response) => {
     console.log("Response status code:", response.statusCode);
+    //console.log("Response headers:", response);
     console.log("Response body:", response.body);
 });
